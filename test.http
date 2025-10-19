@@ -1,0 +1,29 @@
+### Valid request
+POST http://localhost:8080/api/persons
+Content-Type: application/json
+
+{
+  "firstName": "Alice",
+  "lastName": "Smith",
+  "email": "alice@acme.com",
+  "age": 30
+}
+
+### Invalid request
+POST http://localhost:8080/api/persons
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "lastName": "",
+  "email": "bad",
+  "age": -1
+}
+
+### check childAlert
+GET http://localhost:8080/childAlert?address=1509 Culver St
+### Get counts
+GET  http://localhost:8080//phoneAlert?stationNumber=1
+### Get counts
+GET  http://localhost:8080/firestation?stationNumber=187
+
