@@ -59,6 +59,10 @@ public class AlertService {
     public ChildAlertResponse childAlertByAddress(String address){
 
         List<Person> household = dataRepository.getPersonsByAddress(address);
+        if(household.isEmpty()){
+            log.warn("Address {} is not found in database", address);
+            throw new IllegalArgumentException("Address " + address + " is not found in database");
+        }
         List<PersonAge> withAge = household.stream().
                 map(this::toPersonAge).toList();
 

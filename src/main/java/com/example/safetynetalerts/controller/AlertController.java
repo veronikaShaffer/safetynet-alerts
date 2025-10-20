@@ -2,11 +2,13 @@ package com.example.safetynetalerts.controller;
 
 import com.example.safetynetalerts.api.ChildAlertResponse;
 import com.example.safetynetalerts.api.FireStationResponse;
+import com.example.safetynetalerts.api.PersonResponse;
 import com.example.safetynetalerts.model.Person;
 import com.example.safetynetalerts.service.AlertService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @CrossOrigin
@@ -62,9 +65,24 @@ public class AlertController {
                     @ApiResponse(responseCode = "400", description = "Bad Request"),
                     @ApiResponse(responseCode = "500", description = "Server error")})
     @GetMapping("/childAlert")
-    public ResponseEntity<ChildAlertResponse> childAlert(@RequestParam("address") String address){
-        ChildAlertResponse childAlertResponse = alertService.childAlertByAddress(address);
-        log.info("Returning address {}  for the child alert", address);
-        return ResponseEntity.ok( childAlertResponse);
+    public ResponseEntity<?> childAlert(@RequestParam("address") String address) {
+
+        try {
+            ChildAlertResponse childAlertResponse = alertService.childAlertByAddress(address);
+            log.info("Returning address {}  for the child alert", address);
+            if (childAlertResponse.getChildren().isEmpty()) {
+                Map<String, String> msg = Map.of(
+                        "message", "No children are found at the provided address"
+                );
+                return ResponseEntity.ok(msg);
+            }
+            return ResponseEntity.ok(childAlertResponse);
+        } catch (IllegalArgumentException e) {
+            Map<String, String> response = Map.of(
+                    "message", "Address is not found in database"
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
+
 }

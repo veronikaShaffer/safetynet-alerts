@@ -31,10 +31,9 @@ public class PersonCreateRequest {
     @NotBlank
     private String phone;
 
+    @NotBlank
     @Email(message = "email must be a valid email")
     @Size(max = 120, message = "email must be ≤ 120 chars")
     private String email;
 
-    @Min(value = 0, message = "age must be ≥ 0")
-    private Integer age;
 }
