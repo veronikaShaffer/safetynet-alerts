@@ -42,10 +42,27 @@ public class AlertControllerTest {
                 andExpect(jsonPath("$.familyMembers[0].lastName").value("Boyd"));
     }
 
-//    @Test
-//    void childAlert_returnNotFoundAndPayload() throws Exception {
-//
-//    }
+    @Test
+    void childAlert_noChildren_returnsMessage() throws Exception {
+        ChildAlertResponse mockResponse = new ChildAlertResponse(List.of(), List.of());
+
+        when(alertService.childAlertByAddress("123 Main")).thenReturn(mockResponse);
+
+        mvc.perform(get("/childAlert").param("address", "123 Main"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message")
+                        .value("No children are found at the provided address"));
+    }
+    @Test
+    void childAlert_invalidAddress_returnsBadRequest() throws Exception {
+        when(alertService.childAlertByAddress("unknown"))
+                .thenThrow(new IllegalArgumentException("Address not found"));
+
+        mvc.perform(get("/childAlert").param("address", "unknown"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Address is not found in database"));
+    }
 
     @Test
     void childAlert_missingParam_Status400() throws Exception {
