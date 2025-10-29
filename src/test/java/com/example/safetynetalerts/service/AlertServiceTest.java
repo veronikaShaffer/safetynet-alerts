@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,6 +72,21 @@ public class AlertServiceTest {
         verify(dataRepository).getPersonsByAddress(address);
         verifyNoMoreInteractions(dataRepository);
     }
+    @Test
+    void childAlertByAddress_noResidentsThrowsException() {
+        // given
+        String address = "Empty St";
+        when(dataRepository.getPersonsByAddress(address)).thenReturn(List.of());
+
+        // when / then
+        assertThatThrownBy(() -> alertService.childAlertByAddress(address))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Address");
+
+        verify(dataRepository).getPersonsByAddress(address);
+        verifyNoMoreInteractions(dataRepository);
+    }
+
     @Test
     void childAlertByAddress_unknownMedicalRecordIsTreatedAsAdult() {
         String address = "Unknown MR St";

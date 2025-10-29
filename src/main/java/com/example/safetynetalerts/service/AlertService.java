@@ -25,14 +25,6 @@ public class AlertService {
         this.dataRepository = dataRepository;
     }
 
-    public List<Person> peopleCoveredByStation(int stationNumber) {
-        Set<String> addresses = dataRepository.getFirestations().stream()
-                .filter(f->f.getStation() == stationNumber).map(f->f.getAddress()).collect(Collectors.toSet());
-      //  log.info("Addresses covered by station {}:{}", stationNumber, addresses);
-
-        return dataRepository.getPersons().stream()
-                .filter(p->addresses.contains(p.getAddress())).collect(Collectors.toList());
-    }
     public List<String>phoneByStation(int stationNumber) {
 
         //from persons, select those living at the addresses
@@ -54,8 +46,6 @@ public class AlertService {
         return new PersonAge(person, age);
     }
 
-
-
     public ChildAlertResponse childAlertByAddress(String address){
 
         List<Person> household = dataRepository.getPersonsByAddress(address);
@@ -74,7 +64,6 @@ public class AlertService {
                 pwa.getAge()
         )).collect(Collectors.toList());
         //Other adults
-
 
         List<PersonNameDto> familyMembers =withAge.stream().filter(
                 PersonAge::isAdult).map(pwa -> new PersonNameDto(pwa.getPerson().getFirstName(),

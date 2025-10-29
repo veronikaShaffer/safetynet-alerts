@@ -178,4 +178,16 @@ public class PersonControllerTest {
             """))
                 .andExpect(status().isNotFound());
     }
+    private PersonCreateRequest req(
+            String address, String city, String zip, String phone, String email
+    ) {
+        PersonCreateRequest r = new PersonCreateRequest();
+        r.setAddress(address);
+        r.setCity(city);
+        r.setZip(zip);
+        r.setPhone(phone);
+        r.setEmail(email);
+        return r;
+    }
+
 }
